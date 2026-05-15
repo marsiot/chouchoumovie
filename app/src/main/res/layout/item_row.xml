@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="?android:attr/selectableItemBackground"
+    android:gravity="center_vertical"
+    android:minHeight="64dp"
+    android:orientation="horizontal"
+    android:paddingStart="24dp"
+    android:paddingEnd="20dp">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/rowPrimary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textColor="@color/text_primary"
+            android:textSize="16sp"
+            tools:text="跑步"
+ />
+
+        <TextView
+            android:id="@+id/rowSecondary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:ellipsize="end"
+            android:singleLine="true"
+            android:textColor="@color/text_secondary"
+            android:textSize="12sp"
+            android:visibility="gone"
+            tools:text="李荣浩" />
+    </LinearLayout>
+
+    <chouchou.movie.EqualizerView
+        android:id="@+id/rowEqualizer"
+        android:layout_width="16dp"
+        android:layout_height="14dp"
+        android:layout_marginStart="12dp"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/rowMeta"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:textColor="@color/text_secondary"
+        android:textSize="13sp"
+        tools:text="15" />
+
+    <ImageView
+        android:id="@+id/rowMore"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="6dp"
+        android:layout_marginEnd="-12dp"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:contentDescription="更多操作"
+        android:padding="10dp"
+        android:src="@drawable/ic_more"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/rowCheck"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="-8dp"
+        android:padding="5dp"
+        android:src="@drawable/ic_check_off"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/rowChevron"
+        android:layout_width="16dp"
+        android:layout_height="16dp"
+        android:layout_marginStart="10dp"
+        android:src="@drawable/ic_chevron" />
+
+</LinearLayout>
