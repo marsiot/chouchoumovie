@@ -3,6 +3,7 @@
     <color name="bg">#FF0A0A0A</color>
     <color name="bg_elevated">#FF2D2D2D</color>
     <color name="bg_overlay">#F2080808</color>
+    <color name="background_secondary">#FF1A1A1A</color>
 
     <!-- Text -->
     <color name="text_primary">#FFF2F0EC</color>
@@ -15,8 +16,10 @@
 
     <!-- Dividers / fine lines -->
     <color name="divider">#FF1A1A1A</color>
+    <color name="border">#FF3A3A3A</color>
 
     <!-- Legacy (kept for compat) -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="green">#FF4CAF50</color>
 </resources>

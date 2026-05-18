@@ -17,6 +17,7 @@ public class Providers {
     public static final String KEY_CUSTOM_MODEL = "provider_custom_model";
     public static final String KEY_SCAN_DIR = "scan_root_dir";
     public static final String DEFAULT_SCAN_DIR = "Music";
+    public static final String KEY_PARSER_URLS = "parser_urls";
 
     public static final String KEY_RESCAN_PENDING = "pending_rescan";
     public static final String KEY_RESCAN_ALL_PENDING = "pending_rescan_all";
@@ -223,5 +224,35 @@ public class Providers {
             }
             sp.edit().remove("ai_provider").apply();
         }
+    }
+
+    public static final String DEFAULT_PARSER_URL = "https://www.clgod.xyz";
+
+    public static List<String> getParserUrls(SharedPreferences sp) {
+        List<String> out = new ArrayList<>();
+        String json = sp.getString(KEY_PARSER_URLS, null);
+        if (json == null || json.equals("[]")) {
+            out.add(DEFAULT_PARSER_URL);
+            return out;
+        }
+        try {
+            org.json.JSONArray arr = new org.json.JSONArray(json);
+            for (int i = 0; i < arr.length(); i++) {
+                String url = arr.optString(i, null);
+                if (url != null && !url.trim().isEmpty()) {
+                    out.add(url.trim());
+                }
+            }
+        } catch (Exception ignored) {
+        }
+        if (out.isEmpty()) {
+            out.add(DEFAULT_PARSER_URL);
+        }
+        return out;
+    }
+
+    public static void setParserUrls(SharedPreferences sp, List<String> urls) {
+        org.json.JSONArray arr = new org.json.JSONArray(urls == null ? new ArrayList<>() : urls);
+        sp.edit().putString(KEY_PARSER_URLS, arr.toString()).apply();
     }
 }

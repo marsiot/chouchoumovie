@@ -29,6 +29,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class SettingsActivity extends AppCompatActivity {
 
     private static final int COLOR_BG = 0xFF0A0A0A;
@@ -70,7 +73,10 @@ public class SettingsActivity extends AppCompatActivity {
         container = findViewById(R.id.providersContainer);
         findViewById(R.id.btnClose).setOnClickListener(v -> finish());
 
-        container.addView(makeSectionTitle("扫描目录", 0));
+        container.addView(makeSectionTitle("解析网址", 0));
+        container.addView(buildParserUrlsCard());
+
+        container.addView(makeSectionTitle("扫描目录", dp(18)));
         container.addView(buildScanDirCard());
 
         container.addView(makeSectionTitle("AI 服务商", dp(18)));
@@ -179,6 +185,131 @@ public class SettingsActivity extends AppCompatActivity {
         lp.bottomMargin = dp(12);
         tv.setLayoutParams(lp);
         return tv;
+    }
+
+    private View buildParserUrlsCard() {
+        LinearLayout card = new LinearLayout(this);
+        card.setOrientation(LinearLayout.VERTICAL);
+        GradientDrawable bg = new GradientDrawable();
+        bg.setColor(COLOR_ELEVATED);
+        bg.setCornerRadius(dp(14));
+        card.setBackground(bg);
+        card.setPadding(dp(18), dp(16), dp(18), dp(16));
+        LinearLayout.LayoutParams cardLp = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        cardLp.bottomMargin = dp(8);
+        card.setLayoutParams(cardLp);
+
+        TextView hint = new TextView(this);
+        hint.setText("添加电影网站网址，APP会从中提取电影信息和下载链接");
+        hint.setTextColor(COLOR_SECONDARY);
+        hint.setTextSize(12f);
+        card.addView(hint);
+
+        List<String> urls = Providers.getParserUrls(sp);
+        final LinearLayout urlsContainer = new LinearLayout(this);
+        urlsContainer.setOrientation(LinearLayout.VERTICAL);
+        card.addView(urlsContainer);
+
+        for (int i = 0; i < urls.size(); i++) {
+            urlsContainer.addView(makeUrlItem(urls.get(i), i));
+        }
+
+        Button btnAdd = new Button(this);
+        btnAdd.setText("+ 添加网址");
+        btnAdd.setAllCaps(false);
+        btnAdd.setTextSize(14f);
+        btnAdd.setTextColor(COLOR_ACCENT);
+        btnAdd.setBackground(null);
+        btnAdd.setPadding(dp(0), dp(12), dp(0), dp(0));
+        LinearLayout.LayoutParams addLp = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        addLp.topMargin = dp(8);
+        btnAdd.setLayoutParams(addLp);
+        btnAdd.setOnClickListener(v -> promptAddUrl());
+        card.addView(btnAdd);
+
+        return card;
+    }
+
+    private View makeUrlItem(String url, int index) {
+        LinearLayout row = new LinearLayout(this);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        row.setGravity(Gravity.CENTER_VERTICAL);
+
+        TextView urlTv = new TextView(this);
+        urlTv.setText(url);
+        urlTv.setTextColor(COLOR_PRIMARY);
+        urlTv.setTextSize(13f);
+        urlTv.setTypeface(android.graphics.Typeface.MONOSPACE);
+        LinearLayout.LayoutParams urlLp = new LinearLayout.LayoutParams(0,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
+        urlLp.weight = 1;
+        urlTv.setLayoutParams(urlLp);
+        row.addView(urlTv);
+
+        ImageView remove = new ImageView(this);
+        remove.setImageResource(R.drawable.ic_close);
+        remove.setColorFilter(COLOR_SECONDARY, PorterDuff.Mode.SRC_IN);
+        LinearLayout.LayoutParams removeLp = new LinearLayout.LayoutParams(dp(24), dp(24));
+        removeLp.leftMargin = dp(12);
+        remove.setLayoutParams(removeLp);
+        remove.setOnClickListener(v -> removeUrl(index));
+        row.addView(remove);
+
+        LinearLayout.LayoutParams rowLp = new LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        rowLp.topMargin = dp(8);
+        row.setLayoutParams(rowLp);
+        return row;
+    }
+
+    private void promptAddUrl() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("添加解析网址");
+
+        final EditText input = new EditText(this);
+        input.setInputType(InputType.TYPE_TEXT_VARIATION_URI);
+        input.setHint("https://example.com");
+        input.setTextColor(COLOR_PRIMARY);
+        input.setHintTextColor(COLOR_TERTIARY);
+        
+        GradientDrawable bg = new GradientDrawable();
+        bg.setColor(COLOR_BG);
+        bg.setCornerRadius(dp(8));
+        bg.setStroke(1, COLOR_DIVIDER);
+        input.setBackground(bg);
+        input.setPadding(dp(12), dp(12), dp(12), dp(12));
+        
+        builder.setView(input);
+
+        builder.setPositiveButton("添加", (dialog, which) -> {
+            String url = input.getText().toString().trim();
+            if (!url.isEmpty()) {
+                if (!url.startsWith("http")) {
+                    url = "https://" + url;
+                }
+                List<String> urls = Providers.getParserUrls(sp);
+                if (!urls.contains(url)) {
+                    urls.add(url);
+                    Providers.setParserUrls(sp, urls);
+                    recreate();
+                } else {
+                    Toast.makeText(this, "网址已存在", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+        builder.setNegativeButton("取消", null);
+        builder.show();
+    }
+
+    private void removeUrl(int index) {
+        List<String> urls = Providers.getParserUrls(sp);
+        if (index >= 0 && index < urls.size()) {
+            urls.remove(index);
+            Providers.setParserUrls(sp, urls);
+            recreate();
+        }
     }
 
     private View buildScanDirCard() {
